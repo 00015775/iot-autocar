@@ -33,6 +33,7 @@
 **Overall Total**
 **Unique sensors + actuators:** 6
 
+---
 
 ## System components — responsibilities
 - **Raspberry Pi:**
@@ -63,6 +64,7 @@
     - Battery pack (two 3.7 V) → L298N (motors).
     - Ground common: Pi ground and motor driver ground(*GND*) MUST be common.
 
+---
 
 ## System Description/Requirements (*High-level*)
 
@@ -70,6 +72,7 @@ I plan to build a multi-mode driving robot using the collection of hardware comp
 
 I also need the functionality to switch between these three control modes remotely. To accomplish this, I will develop a web application using **Flask**. This web app will be hosted at both the edge and cloud levels: locally on the Raspberry Pi, which will be exposed to the internet through a **Cloudflare Tunnel**, and also on **PythonAnywhere (*or any other free cloud-hosting servers*)** usings its free tier. From this interface, I should be able to select any of the robot's operating modes. In summary, the system integrates onboard sensors and compute on the Raspberry Pi with remote user controls and dual web-hosting, hence enabling flexible and accessibly robot operation from anywhere.
 
+---
 
 ## High-level Overview
 
@@ -79,6 +82,7 @@ I also need the functionality to switch between these three control modes remote
 * *Web app*: **Flask** hosted on Raspberry Pi (edge) and also on the cloud (PythonAnywhere free tier). **Cloudflare Tunnel** is used to expose the Pi-hosted endpoint to the internet.
 * *Mode switching done via the web UI* — toggles robot between (1) IR Line follow, (2) Ultrasonic-path selection, (3) Joystick remote.
 
+---
 
 ## Pseudo code (*High-level*)
 
@@ -113,6 +117,7 @@ while True:
             mode = get_mode_from_web()
 ```
 
+---
 
 ## System ASCII Diagram (*High-level*)
 
@@ -168,6 +173,7 @@ while True:
            └──────────────────────────────┘
 ```
 
+---
 
 ## Power Distribution Diagram
 
