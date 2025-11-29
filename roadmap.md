@@ -185,15 +185,11 @@ elif mode == "joystick":
 
 # Component Diagram
 
-<p align="center">
-  <img src="./diagrams/system-modeling-diagram/component-iot-autocar.png" width="600" height="200">
-</p>
+![component-diagram](./diagrams/system-modeling-diagram/component-iot-autocar.png)
 
 ---
 
 # Sequence Diagram
 
-<p align="center">
-  <img src="./diagrams/system-modeling-diagram/seq-iot-autocar.png" width="1000" height="400">
-</p>
+![sequence-diagram](./diagrams/system-modeling-diagram/seq-iot-autocar.png)
 
