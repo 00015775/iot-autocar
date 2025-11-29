@@ -177,34 +177,379 @@ while True:
 
 ---
 
+## Real-time communication 
+
+In order to achieve a real-time we need more than just Flask. **[Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/)** gives Flask applications access to low latency bi-directional communications between the clients and the server. The client-side can use any of the SocketIO client libraries in Javascript, Python, C++, Java and Swift, or any other compatible client to establish a permanent connection to the server. This approach works for both edge and cloud level hostings:  
+* The Flask app hosted on the Raspberry Pi (local/edge)
+* The same Flask app mirrored on PythonAnywhere (cloud)
+
+In theory, the same `app.py` code being be uploaded on RPi and PythonAnywhere, should work similarly, by being real-time, low-latency and bi-directional.
+
+```
+Flask  ───► Flask-SocketIO (Python package)
+                    ▲
+                    └──► uses socket.io protocol (under the hood)
+                    └──► works with the official socket.io JavaScript client
+```
+
+---
+
+## Hardware Architecture (**High-level**)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                          ROBOT CHASSIS                              │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │                    RASPBERRY PI 3 B v1.2                     │   │
+│  │  • Flask + Flask-SocketIO Web Server (Edge)                  │   │
+│  │  • Mode Controller                                           │   │
+│  │  • Motor Control Logic                                       │   │
+│  │  • Network Communication Handler                             │   │
+│  └────────┬─────────────┬──────────────┬────────────────────────┘   │
+│           │             │              │                            │
+│  ┌────────▼─────────────▼──────────────▼─────────┐                  │
+│  │         L298N Motor Driver Board              │                  │
+│  │  • Controls DC Motor Speed & Direction        │                  │
+│  └────────┬──────────────────────────┬───────────┘                  │
+│           │                          │                              │
+│  ┌────────▼────────┐        ┌────────▼────────┐                     │
+│  │  DC Motor (L)   │        │  DC Motor (R)   │                     │
+│  │    3.7V         │        │    3.7V         │                     │
+│  └─────────────────┘        └─────────────────┘                     │
+│                                                                     │
+│  ┌──────────────────────────────────────────┐                       │
+│  │         Servo Motor (SG90)               │                       │
+│  │  • Pan Ultrasonic Sensor                 │                       │
+│  │  • Controlled by Raspberry Pi GPIO       │                       │
+│  └────────┬─────────────────────────────────┘                       │
+│           │                                                         │
+│  ┌────────▼─────────────────────────────────┐                       │
+│  │   Ultrasonic Distance Sensor (HC-SR04)   │                       │
+│  │  • Measures distance (2cm - 400cm)       │                       │
+│  │  • Used in Obstacle Avoidance Mode       │                       │
+│  └──────────────────────────────────────────┘                       │
+│                                                                     │
+│  ┌──────────────────────────────────────────┐                       │
+│  │    IR Sensor (Left)  │  IR Sensor (Right)│                       │
+│  │  • Detects black line on white surface   │                       │
+│  │  • Used in Line Following Mode           │                       │
+│  └──────────────────────────────────────────┘                       │
+│                                                                     │
+│  ┌──────────────────────────────────────────┐                       │
+│  │          LEDs & Status Indicators        │                       │
+│  │  • Mode indication                       │                       │
+│  │  • Status feedback                       │                       │
+│  └──────────────────────────────────────────┘                       │
+│                                                                     │
+│  ┌──────────────────────────────────────────┐                       │
+│  │     Power Bank (10,000mAh)               │                       │
+│  │  • Powers Raspberry Pi 3                 │                       │
+│  └──────────────────────────────────────────┘                       │
+│                                                                     │
+│  ┌──────────────────────────────────────────┐                       │
+│  │  2x 3.7V Batteries + Battery Holder      │                       │
+│  │  • Powers Motors via L298N               │                       │
+│  └──────────────────────────────────────────┘                       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              │ WiFi Network
+                              │ (Same LAN)
+                              │
+┌─────────────────────────────▼──────────────────────────────┐
+│                     COMPUTER STATION                       │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              Arduino Uno R3                          │  │
+│  │  • Reads Joystick X/Y coordinates                    │  │
+│  │  • Sends data via USB Serial                         │  │
+│  └────────┬─────────────────────────────────────────────┘  │
+│           │                                                │
+│  ┌────────▼─────────────────────────────────────────────┐  │
+│  │    2-Axis Joystick Module (HW-504)                   │  │
+│  │  • X-axis: VRx → Arduino A0                          │  │
+│  │  • Y-axis: VRy → Arduino A1                          │  │
+│  │  • SW (button): Digital Pin                          │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │         Python Serial Reader Script                  │  │
+│  │  • Reads from Arduino via Serial (USB)               │  │
+│  │  • Sends joystick data to Raspberry Pi via HTTP/WS   │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │           Web Browser Interface                      │  │
+│  │  • Access Flask web app                              │  │
+│  │  • Switch between modes                              │  │
+│  │  • Monitor robot status                              │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│           USB Power → Arduino Uno R3                       │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## GPIO Pin Mapping Template (Raspberry Pi)
+
+```
+L298N Motor Driver:
+• IN1 → GPIO 17 (Motor A direction)
+• IN2 → GPIO 18 (Motor A direction)
+• IN3 → GPIO 22 (Motor B direction)
+• IN4 → GPIO 23 (Motor B direction)
+• ENA → GPIO 12 (PWM - Motor A speed)
+• ENB → GPIO 13 (PWM - Motor B speed)
+
+IR Sensors:
+• Left IR OUT → GPIO 24
+• Right IR OUT → GPIO 25
+
+Ultrasonic Sensor:
+• TRIG → GPIO 5
+• ECHO → GPIO 6
+
+Servo Motor:
+• PWM Signal → GPIO 27
+
+LEDs (Status Indicators):
+• LED1 (Mode 1) → GPIO 16
+• LED2 (Mode 2) → GPIO 20
+• LED3 (Mode 3) → GPIO 21
+```
+
+---
+
 ## Power Distribution Diagram
 
 ```
+┌──────────────────────────────────────────┐
+│         ROBOT POWER SYSTEM               │
+├──────────────────────────────────────────┤
+│                                          │
+│  ┌────────────────────────────────┐      │
+│  │  Power Bank 10,000mAh          │      │
+│  │  Output: 5V / 2A               │      │
+│  └──────────┬─────────────────────┘      │
+│             │                            │
+│             │ Micro USB                  │
+│             │                            │
+│  ┌──────────▼─────────────────────┐      │
+│  │    Raspberry Pi 3 Model B      │      │
+│  │    Power: 5V / 2.5A            │      │
+│  └────────────────────────────────┘      │
+│                                          │
+│  ┌────────────────────────────────┐      │
+│  │  2x 3.7V Batteries (Series)    │      │
+│  │  Total: 7.4V                   │      │
+│  └──────────┬─────────────────────┘      │
+│             │                            │
+│             │                            │
+│  ┌──────────▼─────────────────────┐      │
+│  │      L298N Motor Driver        │      │
+│  │  • Powers both DC motors       │      │
+│  │  • 5V regulator for logic      │      │
+│  └──────────┬──────────┬──────────┘      │
+│             │          │                 │
+│    ┌────────▼───┐  ┌───▼────────┐        │
+│    │ DC Motor L │  │ DC Motor R │        │
+│    └────────────┘  └────────────┘        │
+│                                          │
+└──────────────────────────────────────────┘
 
-    ┌──────────────────────────────────────────────────────────────┐
-    │                    ROBOT CHASSIS                             │
-    │                                                              │
-    │  [10,000mAh Power Bank] ──► Raspberry Pi 3 (5V/2.5A)         │
-    │         │                        │                           │
-    │         │                        └──► Servo Motor (5V)       │
-    │         │                        └──► Status LEDs (GPIO)     │
-    │         │                        └──► Infrared Sensors (5V)  │
-    │         │                        └──► Ultrasonic Sensor (5V) │
-    │         │                                                    │
-    │  [2x 3.7V Batteries] ──► L298N Motor Controller              │
-    │                               │                              │
-    │                               ├──► DC Motor 1                │
-    │                               └──► DC Motor 2                │
-    │                                                              │
-    └──────────────────────────────────────────────────────────────┘
-
-    ┌─────────────────────────────────────────────────────────┐
-    │                 REMOTE CONTROL UNIT                     │
-    │                                                         │
-    │  [Computer USB Port] ──► Arduino Uno R3 (5V)            │
-    │                               │                         │
-    │                               └──► Joystick Module (5V) │
-    └─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│      COMPUTER STATION POWER              │
+├──────────────────────────────────────────┤
+│                                          │
+│  ┌────────────────────────────────┐      │
+│  │         Computer USB Port      │      │
+│  │         Output: 5V / 500mA     │      │
+│  └──────────┬─────────────────────┘      │
+│             │                            │
+│             │ USB Cable                  │
+│             │                            │
+│  ┌──────────▼─────────────────────┐      │
+│  │       Arduino Uno R3           │      │
+│  │       Power: 5V                │      │
+│  └────────────┬───────────────────┘      │
+│               │                          │
+│               │ 5V Pin                   │
+│               │                          │
+│  ┌────────────▼───────────────────┐      │
+│  │    Joystick HW-504             │      │
+│  │    Power: 5V                   │      │
+│  └────────────────────────────────┘      │
+│                                          │
+└──────────────────────────────────────────┘
 ```
+
+---
+
+## Web Application Structure (*Template*)
+
+```
+project/
+│
+├── raspberry_pi/
+│   ├── app.py                  # Main Flask application
+│   ├── config.py               # Configuration settings
+│   ├── requirements.txt        # Python dependencies
+│   │
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── api_routes.py       # REST API endpoints
+│   │   └── web_routes.py       # Web page routes
+│   │
+│   ├── controllers/
+│   │   ├── __init__.py
+│   │   ├── mode_controller.py    # Mode switching logic
+│   │   ├── motor_controller.py   # Motor control
+│   │   └── sensor_controller.py  # Sensor readings
+│   │
+│   ├── modes/
+│   │   ├── __init__.py
+│   │   ├── line_follow.py      # Mode 1 implementation
+│   │   ├── obstacle_avoid.py   # Mode 2 implementation
+│   │   └── joystick_control.py # Mode 3 implementation
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       └── control.js     # Frontend JavaScript
+│   │
+│   └── templates/
+│       ├── index.html         # Main control page
+│       └── status.html        # Status monitoring
+│
+├── computer_station/
+│   ├── serial_bridge.py       # Arduino serial reader
+│   └── requirements.txt
+│
+├── arduino/
+│   └── joystick_reader/
+│       └── joystick_reader.ino # Arduino sketch
+│
+└── cloud/
+    └── pythonanywhere/
+        ├── flask_app.py       # Cloud Flask app
+        └── requirements.txt
+```
+
+---
+
+## Data Flow Summary
+
+1. **Mode Selection**: User → Web Browser → Cloud/Edge Flask → Raspberry Pi → Mode Switch
+2. **Line Following**: IR Sensors → Raspberry Pi GPIO → Motor Driver → Motors
+3. **Obstacle Avoidance**: Ultrasonic + Servo → Raspberry Pi → Path Decision → Motors
+4. **Joystick Control**: Joystick → Arduino → Serial → Python Script → HTTP → Raspberry Pi → Motors
+
+---
+
+## Deployment Architecture (*High-level*)
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    DEPLOYMENT LAYERS                       │
+└────────────────────────────────────────────────────────────┘
+
+Layer 1: CLOUD (PythonAnywhere)
+┌──────────────────────────────────────────┐
+│  • Domain: username.pythonanywhere.com   │
+│  • Flask app in production mode          │
+│  • Forwards commands to RPi via HTTP     │
+│  • Acts as remote control interface      │
+└──────────────────────────────────────────┘
+                    ▼
+Layer 2: TUNNEL (Cloudflare)
+┌──────────────────────────────────────────┐
+│  • Secure tunnel to local network        │
+│  • No port forwarding needed             │
+│  • Expose RPi Flask to internet          │
+└──────────────────────────────────────────┘
+                    ▼
+Layer 3: EDGE (Raspberry Pi)
+┌──────────────────────────────────────────┐
+│  • Local Flask server (192.168.x.x:5000) │
+│  • Direct hardware control               │
+│  • Real-time sensor processing           │
+│  • Mode execution engine                 │
+└──────────────────────────────────────────┘
+                    ▼
+Layer 4: HARDWARE (Robot Chassis)
+┌──────────────────────────────────────────┐
+│  • Motors, sensors, servo                │
+│  • GPIO-controlled components            │
+│  • Physical robot operation              │
+└──────────────────────────────────────────┘
+
+Layer 5: CONTROL STATION (Computer)
+┌──────────────────────────────────────────┐
+│  • Arduino + Joystick                    │
+│  • Python serial bridge                  │
+│  • Sends joystick data to RPi            │
+└──────────────────────────────────────────┘
+```
+
+---
+
+## Safety & Error Handling
+
+- **Emergency Stop**: Implement stop button in web interface
+- **Network Monitoring**: Detect connection loss
+- **Battery Monitoring**: Low battery warning via LEDs
+- **Collision Detection**: Stop on obstacle < 10cm (Mode 2)
+
+---
+
+## Development Roadmap
+
+### Phase 1: Hardware Setup
+- Assemble robot chassis
+- Connect motors to L298N
+- Wire sensors to Raspberry Pi
+- Test individual components
+
+### Phase 2: Basic Software
+- Install Raspberry Pi OS
+- Set up Flask + Flask-SocketIO framework
+- Implement GPIO control
+- Test motor movements
+
+### Phase 3: Mode Development
+- Develop Mode 1 (Line Following)
+- Develop Mode 2 (Obstacle Avoidance)
+- Develop Mode 3 (Joystick Control)
+
+### Phase 4: Web Application
+- Create Flask web interface
+- Implement mode switching
+- Add status monitoring
+- Test on local network
+
+### Phase 5: Cloud Deployment
+- Deploy to PythonAnywhere
+- Set up Cloudflare Tunnel
+- Test remote access
+- Finalize documentation
+
+---
+
+## Testing Checklist
+
+- [ ] Individual motor control
+- [ ] IR sensor calibration
+- [ ] Ultrasonic distance accuracy
+- [ ] Servo sweep range
+- [ ] Joystick data transmission
+- [ ] Network communication
+- [ ] Mode switching
+- [ ] Emergency stop functionality
+- [ ] Cloud accessibility
+- [ ] Battery life under load
 
 
