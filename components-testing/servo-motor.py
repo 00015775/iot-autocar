@@ -32,7 +32,7 @@ YELLOW - VCC, 5V
 RED - Any GPIO pins, but use PWN enabled pins (BCM: 12,13,18,19) if any left.
 BROWN - GND
 
-Referece:
+Reference:
 Code adapted from https://www.raspberrypi-spy.co.uk/2018/02/basic-servo-use-with-the-raspberry-pi/
 Information learned from https://docs.arduino.cc/tutorials/generic/basic-servo-control/
 
