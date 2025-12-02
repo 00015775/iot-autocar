@@ -28,8 +28,8 @@ servo.value = [-1: 0 degree,
                1: 180 degree]
 
 Pins:
-YELLOW - VCC, 5V
-RED - Any GPIO pins, but use PWN enabled pins (BCM: 12,13,18,19) if any left.
+RED - VCC, 5V
+YELLOW - Any GPIO pins, but use PWN enabled pins (BCM: 12,13,18,19) if any left.
 BROWN - GND
 
 Reference:

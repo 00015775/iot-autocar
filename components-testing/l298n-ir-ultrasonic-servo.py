@@ -30,8 +30,8 @@ HC-SR04 Ultrasonic sensor pins:
 
   
 Servo SG09 motor:
-  YELLOW - VCC, 5V
-  RED - 19; PWN enabled pins (BCM: 12,13,18,19) if any left.
+  RED - VCC, 5V
+  YELLOW - 19; PWN enabled pins (BCM: 12,13,18,19) if any left.
   BROWN - GND
 
 
