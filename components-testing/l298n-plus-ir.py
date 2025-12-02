@@ -1,6 +1,9 @@
 # connect L298N and IR sensor
 
 """
+Wires from DC hobby motor:
+  Red wires - IN1, IN3
+  Black wires - IN2, IN4
 
  IN1, IN2 = 7, 8
  IN3, IN4 = 9, 10
