@@ -9,7 +9,7 @@ ena.on()
 enb.on()
 
 # Robot(left=(forward=3, backward=2), right=(forward=21, backward=20))
-robot = Robot(left=(3,2), right=(21,20))
+robot = Robot(left=(7,8), right=(9,10))
 
 robot.forward()
 sleep(4)
