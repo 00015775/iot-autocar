@@ -17,7 +17,7 @@ L298N and DC hobby motor wires and pins:
 IR sensor pins:
   GND - GND
   VCC - 5V
-  OUT(right)=17, OUT(left)=27; IR sensors; PWM enabled GPIOs
+  OUT(right)=17, OUT(left)=27;
 
   
 HC-SR04 Ultrasonic sensor pins:
