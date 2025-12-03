@@ -98,6 +98,8 @@ finally:
     conn.close()
     sock.close()
     robot.close()
+    ena.off()
+    enb.off()
 
 
 """
