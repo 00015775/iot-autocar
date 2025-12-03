@@ -22,7 +22,6 @@
     * The **servo** only performs a sweep when an obstacle is detected by either the **IR sensors** or the **ultrasonic sensor**.
     * Otherwise, the car continues driving straight with continuous distance monitoring.
 
-![component-diagram](./diagrams/uml-diagrams/(edge-level)component-diagram.png)
 
 ---
 
@@ -67,8 +66,11 @@ HW-504 Joystick
         ↓
  L298N motor → DC hobby motors
 ```
+#### Control-Flow and Component Diagrams (_for visual understanding_)
 
 ![control-flow-diagram](./diagrams/uml-diagrams/(edge-level)control-flow-diagram.png)
+
+![component-diagram](./diagrams/uml-diagrams/(edge-level)component-diagram.png)
 
 ---
 
