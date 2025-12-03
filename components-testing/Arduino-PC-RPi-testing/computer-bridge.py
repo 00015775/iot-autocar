@@ -21,7 +21,7 @@ import socket
 SERIAL_PORT = '/dev/cu.usbmodem1101'  # Serial port shown at the top in Arduino IDE
 BAUD_RATE = 9600
 
-RPi_IP = '192.168.1.35'  # Raspberry Pi IP
+RPi_IP = 'jamescameronpi3.local'  # Dynamic Raspberry Pi IP, if it fails then use a static IP address
 RPi_PORT = 5005
 
 # --- setup ---
