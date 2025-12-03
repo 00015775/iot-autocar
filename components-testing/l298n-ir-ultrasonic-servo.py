@@ -77,7 +77,7 @@ def set_servo_deg(deg):
 
 
 # ---- configurations ----
-FRONT_THRESHOLD = 25     # in cm obstacle distance limit
+FRONT_THRESHOLD = 40     # in cm obstacle distance limit
 REVERSE_TIME = 0.4       # time to move back and create some space 
 TURN_TIME = 0.55         # time to rotate toward chosen direction
 
