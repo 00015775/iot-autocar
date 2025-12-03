@@ -66,3 +66,24 @@ HW-504 Joystick
  L298N motor → DC hobby motors
 ```
 
+---
+
+## Sequential Order of locally running the program
+
+There are many folders at the root directory, but for locally running the program, as of now only 3 folders/files are of importance:
+```
+iot-autocar/
+├── arduino/
+│   └── hw-504-joystick-send-values.ino
+├── raspberry-pi/
+│   └── pi-receiver-mode-switcher.py
+└── computer/
+    └── computer-bridge.py
+```
+
+Inside of `arduino/` folder is the `hw-504-joystick-send-values.ino` code for uploading into the **Arduino Uno R3**. In `raspberry-pi/`, `pi-receiver-mode-switcher.py` is the code for **Raspberry Pi** which waits and receives the coordinate values over the local subnet. In `computer/` is the code to run on your computer/PC that is connected to Arduino via USB; Arduino reads coordinates and sends to computer, and then computer sends it to RPi over the local subnet. Below is the order of running these files:
+1. Upload `hw-504-joystick-send-values.ino` to **Arduino Uno R3**
+2. Run `pi-receiver-mode-switcher.py` from your RPi: `python ./raspberry-pi/pi-receiver-mode-switcher.py` or `python3 ./raspberry-pi/pi-receiver-mode-switcher.py`
+3. Only after than, run `computer-bridge.py` on your computer: `python ./computer/computer-bridge.py` or `python3 ./computer/computer-bridge.py`
+
+

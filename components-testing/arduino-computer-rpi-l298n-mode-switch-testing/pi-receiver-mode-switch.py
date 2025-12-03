@@ -1,6 +1,6 @@
 
 """
-Step 3: RPi receives coordinates and stores them in dictionary for later use
+STEP 3: RPi receives coordinates and based on that changes mode and controls the motor
 
 The order of running the code:
 

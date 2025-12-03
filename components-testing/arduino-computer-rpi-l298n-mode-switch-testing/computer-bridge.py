@@ -1,17 +1,18 @@
 # pip install pyserial OR python3 -m pip install pyserial
+# activate venv -> install pyserial -> run this code on your computer (not RPi or Arduino)
 
 """
-Step 2: Computer receives coordinates and sends them to RPi
+STEP 2: Computer receives coordinates and sends them to RPi
 
 The order of running the code:
 
   1. Upload the hw-504-joystick-send-values.ino to Arduino.
 
-  2. Run pi-receiver.py on the Raspberry Pi first, and it will start listening on the specified port and wait for a connection.
+  2. Run pi-receiver-mode-switch.py on the Raspberry Pi first, and it will start listening on the specified port and wait for a connection.
 
   3. Next, run computer-bridge.py on the computer. It will connect to the Raspberry Pi and start reading from the Arduino.
         Once the double-press on the joystick is done, the Pi will start receiving and printing the joystick data.
-      
+       
 """
 
 import serial

@@ -1,6 +1,6 @@
 
 /*
-Step 1: Arduino sends the coordinates to computer
+STEP 1: Arduino sends the coordinates to computer
 
 The order of running the code:
 

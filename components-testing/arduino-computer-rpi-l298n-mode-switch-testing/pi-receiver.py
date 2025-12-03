@@ -1,6 +1,8 @@
 
 """
-Step 3: RPi receives coordinates and stores them in dictionary for later use
+THIS CODE WAS TESTED TO CHECK THE REMOTE CONTROL OF L298N
+
+(OPTIONAL): RPi receives coordinates and stores them in dictionary for later use
 
 The order of running the code:
 
@@ -10,7 +12,7 @@ The order of running the code:
 
   3. Next, run computer-bridge.py on the computer. It will connect to the Raspberry Pi and start reading from the Arduino.
         Once the double-press on the joystick is done, the Pi will start receiving and printing the joystick data.
-      
+        
 """
 
 import socket
