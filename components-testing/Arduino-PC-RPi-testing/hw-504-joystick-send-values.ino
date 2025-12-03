@@ -65,11 +65,11 @@ void loop() {
 
       // LED feedback for ON/OFF state
       if (sendingEnabled) {
-        // ON = GREEN
+        // ON = BLUE
         digitalWrite(redPin, LOW);
         digitalWrite(bluePin, HIGH);
       } else {
-        // OFF = BLUE
+        // OFF = RED
         digitalWrite(redPin, HIGH);
         digitalWrite(bluePin, LOW);
       }
