@@ -33,13 +33,16 @@ print("Bridge running...")
 
 try:
     while True:
-        line = ser.readline().decode('utf-8').strip()
-        if line.startswith("X:"):  # joystick coordinates
-            sock.sendall((line + "\n").encode('utf-8'))
-        elif line.startswith("SENDING_ON"):
-            print("[INFO] Sending enabled")
-        elif line.startswith("SENDING_OFF"):
-            print("[INFO] Sending disabled")
+        if ser.in_waiting > 0:  # check if there is data to read
+            line = ser.readline().decode('utf-8').strip()
+
+            if line.startswith("X:"):  # joystick coordinates
+                sock.sendall((line + "\n").encode('utf-8'))
+            elif line.startswith("SENDING_ON"):
+                print("[INFO] Sending enabled")
+            elif line.startswith("SENDING_OFF"):
+                print("[INFO] Sending disabled")
+                
 except KeyboardInterrupt:
     print("Exiting...")
 finally:

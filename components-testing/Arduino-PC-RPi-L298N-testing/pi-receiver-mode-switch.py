@@ -235,7 +235,7 @@ try:
                 set_servo_deg(90)
                 reverse_and_turn(best_angle)
             else:
-                robot.forward()
+                robot.forward(0.5)
 
         # small loop delay
         sleep(0.02)
