@@ -1,4 +1,4 @@
-# pip install pyserial OR python -m pip install pyserial
+# pip install pyserial OR python3 -m pip install pyserial
 
 """
 Step 2: Computer receives coordinates and sends them to RPi

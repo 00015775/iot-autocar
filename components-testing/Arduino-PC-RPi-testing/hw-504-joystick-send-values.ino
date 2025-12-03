@@ -58,7 +58,7 @@ void loop() {
   if (sendingEnabled) {
     int x = analogRead(X_pin);
     int y = analogRead(Y_pin);
-    int sw = swState == LOW ? 1 : 0; // active LOW: pressed=0, released=1
+    int sw = swState == LOW ? 1 : 0; // active LOW: pressed=1, released=0
     Serial.print("X:");
     Serial.print(x);
     Serial.print("|Y:");
