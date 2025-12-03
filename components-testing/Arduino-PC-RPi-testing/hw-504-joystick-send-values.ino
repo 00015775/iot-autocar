@@ -19,6 +19,11 @@ const int SW_pin = 8; // digital pin connected to switch output
 const int X_pin = A0; // analog pin connected to X output
 const int Y_pin = A1; // analog pin connected to Y output
 
+// RGB LED pins
+int redPin = 6;
+int bluePin = 7;
+
+
 // Double press variables
 unsigned long lastPressTime = 0;
 const unsigned long doublePressDelay = 500; // max time between presses in milliseconds
@@ -28,6 +33,13 @@ bool sendingEnabled = false;
 void setup() {
   pinMode(SW_pin, INPUT_PULLUP); // internal pullup resistor
   Serial.begin(9600);
+
+  pinMode(redPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+
+  //start LED as OFF (remote is OFF)
+  digitalWrite(redPin, HIGH);   // RED
+  digitalWrite(bluePin, LOW);
 }
 
 void loop() {
@@ -50,6 +62,18 @@ void loop() {
       pressCount = 0;
       Serial.print("SENDING_");
       Serial.println(sendingEnabled ? "ON" : "OFF");
+
+      // LED feedback for ON/OFF state
+      if (sendingEnabled) {
+        // ON = GREEN
+        digitalWrite(redPin, LOW);
+        digitalWrite(bluePin, HIGH);
+      } else {
+        // OFF = BLUE
+        digitalWrite(redPin, HIGH);
+        digitalWrite(bluePin, LOW);
+      }
+
     }
   }
   lastSwState = swState;
