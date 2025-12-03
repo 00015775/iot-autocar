@@ -100,5 +100,6 @@ void loop() {
 Reference:
 Code adapted from https://lastminuteengineers.com/joystick-interfacing-arduino-processing/
 Information learned from https://docs.cirkitdesigner.com/component/fa55a084-79fb-4baa-914f-2151a791a6b0/joystick-module
+Code adapted from https://projecthub.arduino.cc/semsemharaz/interfacing-rgb-led-with-arduino-b59902
 
 */
