@@ -22,6 +22,8 @@
     * The **servo** only performs a sweep when an obstacle is detected by either the **IR sensors** or the **ultrasonic sensor**.
     * Otherwise, the car continues driving straight with continuous distance monitoring.
 
+![component-diagram](./diagrams/uml-diagrams/(edge-level)component-diagram.png)
+
 ---
 
 ## Remote Control of the Car from 2-Axis HW-504 Joystick Module
@@ -66,24 +68,30 @@ HW-504 Joystick
  L298N motor → DC hobby motors
 ```
 
+![control-flow-diagram](./diagrams/uml-diagrams/(edge-level)control-flow-diagram.png)
+
 ---
 
 ## Sequential Order of locally running the program
 
-There are many folders at the root directory, but for locally running the program, as of now only 3 folders/files are of importance:
+As of now only **3 folders/files are of importance**:
 ```
 iot-autocar/
 ├── arduino/
-│   └── hw-504-joystick-send-values.ino
+│   └── hw-504-joystick-send-values.ino              # upload to Arduino
 ├── raspberry-pi/
-│   └── pi-receiver-mode-switcher.py
+│   └── pi-receiver-mode-switcher.py                 # run on Raspberry Pi
 └── computer/
-    └── computer-bridge.py
+    └── computer-bridge.py                           # run on computer/PC
 ```
 
-Inside of `arduino/` folder is the `hw-504-joystick-send-values.ino` code for uploading into the **Arduino Uno R3**. In `raspberry-pi/`, `pi-receiver-mode-switcher.py` is the code for **Raspberry Pi** which waits and receives the coordinate values over the local subnet. In `computer/` is the code to run on your computer/PC that is connected to Arduino via USB; Arduino reads coordinates and sends to computer, and then computer sends it to RPi over the local subnet. Below is the order of running these files:
-1. Upload `hw-504-joystick-send-values.ino` to **Arduino Uno R3**
-2. Run `pi-receiver-mode-switcher.py` from your RPi: `python ./raspberry-pi/pi-receiver-mode-switcher.py` or `python3 ./raspberry-pi/pi-receiver-mode-switcher.py`
-3. Only after than, run `computer-bridge.py` on your computer: `python ./computer/computer-bridge.py` or `python3 ./computer/computer-bridge.py`
+#### The order of running these files:
+1. Upload `hw-504-joystick-send-values.ino` to Arduino
+2. Followingly, run `pi-receiver-mode-switcher.py` from your RPi: 
+    * `python ./raspberry-pi/pi-receiver-mode-switcher.py` or 
+    * `python3 ./raspberry-pi/pi-receiver-mode-switcher.py`
+3. Only after than, run `computer-bridge.py` on your computer: 
+    * `python ./computer/computer-bridge.py` or 
+    * `python3 ./computer/computer-bridge.py`
 
 
