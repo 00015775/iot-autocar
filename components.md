@@ -79,12 +79,15 @@ HW-504 Joystick
 As of now only **3 folders/files are of importance**:
 ```
 iot-autocar/
+│
 ├── arduino/
-│   └── hw-504-joystick-send-values.ino              # upload to Arduino
+│   └── hw-504-joystick-send-values.ino              # STEP 1: upload to Arduino
+│
 ├── raspberry-pi/
-│   └── pi-receiver-mode-switcher.py                 # run on Raspberry Pi
+│   └── pi-receiver-mode-switcher.py                 # STEP 2: run on Raspberry Pi
+│
 └── computer/
-    └── computer-bridge.py                           # run on computer/PC
+    └── computer-bridge.py                           # STEP 3: run on computer/PC
 ```
 
 #### The order of running these files:
