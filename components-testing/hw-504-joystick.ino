@@ -1,6 +1,16 @@
 // testing joystick from computer connected to Arduino Uno R3 via USB
 // upload this code to Arduino for testing
 
+/*
+Pins:
+  GND - GND
+  5V+ - 5V
+  VRx - A0 (only analog pin)
+  VRy - A1 (only analog pin)
+  SW - digital pin 8
+*/
+
+
 const int SW_pin = 8; // digital pin, receives 0 if button is pressed, 1 otherwise
 const int X_pin = A0; // control X-axis of joystick
 const int Y_pin = A1; // control Y-axis of joystick
