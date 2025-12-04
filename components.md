@@ -125,8 +125,7 @@ HW-504 Joystick
 3. **Servo SG09 motor:**
 ```text
     RED - VCC, 5V
-    YELLOW - GPIO19; 
-    PWN enabled pins (BCM: GPIO12, GPIO13, GPIO18, GPIO19) if available.
+    YELLOW - GPIO19; PWN enabled pins (BCM: GPIO12, GPIO13, GPIO18, GPIO19) if available.
     BROWN - GND
 ```
 
