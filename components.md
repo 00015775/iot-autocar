@@ -87,12 +87,12 @@ HW-504 Joystick
 *(_OPTIONALLY_) Check out how those components are assembled and connected individually, visit [diagrams/circuit-diagrams/](./diagrams/circuit-diagrams/). For checking the code of individual componets, go to [components-testing/individual-parts-testing](./components-testing/individual-parts-testing)*
 
 <details>
-<summarry>
+<summary>
     <strong>To see where each wire and pin connects, click here:</strong>
-</summarry>
+</summary>
 
 - **L298N and DC hobby motor wires and pins:**
-```text
+`
     Red wires - IN1, IN3
     Black wires - IN2, IN4
 
@@ -106,7 +106,7 @@ HW-504 Joystick
 
     NOTE: Both RPi and L298N MUST have a COMMON ground/GND!
     Connect RPi GND to L298N GND powered from battery
-```
+`
 
 - **IR sensor pins:**
 ```text
