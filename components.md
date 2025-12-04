@@ -86,6 +86,82 @@ HW-504 Joystick
 
 *(_OPTIONALLY_) Check out how those components are assembled and connected individually, visit [diagrams/circuit-diagrams/](./diagrams/circuit-diagrams/). For checking the code of individual componets, go to [components-testing/individual-parts-testing](./components-testing/individual-parts-testing)*
 
+<details>
+<summarry>
+    <strong>To see where each wire and pin connects, click here:</strong>
+</summarry>
+
+- **L298N and DC hobby motor wires and pins:**
+```text
+    Red wires - IN1, IN3
+    Black wires - IN2, IN4
+
+    IN1, IN2 = GPIO7, GPIO8
+    IN3, IN4 = GPIO9, GPIO10
+    ENA, ENB = GPIO13, GPIO12
+
+    12+V (VC) - Connect to Power Supply Battery 2x3.7V
+    GND - GND
+    5+V (VCC) - no need to connect to it, since DC motors require 6V each
+
+    NOTE: Both RPi and L298N MUST have a COMMON ground/GND!
+    Connect RPi GND to L298N GND powered from battery
+```
+
+- **IR sensor pins:**
+```text
+    GND - GND
+    VCC - 5V
+    OUT(right)=GPIO17, 
+    OUT(left)=GPIO27
+
+ Instead of connecting GND, VCC to each of IR sensors individually, 
+ connect only a single GND, VCC from RPi to breadboard then 
+ distribute from there to IR sensors which are also connected to breadboard
+```
+
+- **Servo SG09 motor:**
+```text
+    RED - VCC, 5V
+    YELLOW - GPIO19; 
+    PWN enabled pins (BCM: GPIO12, GPIO13, GPIO18, GPIO19) if available.
+    BROWN - GND
+```
+
+- **HC-SR04 Ultrasonic sensor pins:**
+```text
+    VCC - 5V
+    GND - GND
+    TRIG - GPIO16
+    ECHO - GPIO26
+  
+    Make sure to use voltage divider with two resistors 
+    for pin connected to Echo. Otherwise the program 
+    will not work and Pi can be damaged!
+
+    Instead of connecting GND and VCC individually to ultrasonic
+    and servo, a single GND/VCC is connected to breadboard
+    and from there distributed to ultrasonic and servo motor. 
+```
+
+- **HW-504 2-Axis joystick:**
+```text
+    GND - GND
+    5V+ - 5V
+    VRx - A0 (only analog pin)
+    VRy - A1 (only analog pin)
+    SW - digital pin 8
+```
+
+- **RGB LED:**
+```text
+   Long leg to 3.3V
+   1st leg to digital pin 7 (RED)
+   3rs leg leave it alone; not used
+   4th lef to digital pin 6 (BLUE)
+```
+
+</details>   
 
 ## Sequential Order of locally running the program
 
