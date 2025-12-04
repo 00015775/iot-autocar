@@ -94,7 +94,7 @@ HW-504 Joystick
 ### Components were connected in the order provided below.
 
 1. **L298N and DC hobby motor wires and pins:**
-```text
+<pre>
     Red wires - IN1, IN3
     Black wires - IN2, IN4
 
@@ -108,10 +108,10 @@ HW-504 Joystick
 
     NOTE: Both RPi and L298N MUST have a COMMON ground/GND!
     Connect RPi GND to L298N GND powered from battery
-```
+</pre>
 
 2. **IR sensor pins:**
-```text
+<pre>
     GND - GND
     VCC - 5V
     OUT(right)=GPIO17, 
@@ -120,17 +120,17 @@ HW-504 Joystick
     Instead of connecting GND, VCC to each of IR sensors individually, 
     connect only a single GND, VCC from RPi to breadboard then 
     distribute from there to IR sensors which are also connected to breadboard
-```
+</pre>
 
 3. **Servo SG09 motor:**
-```text
+<pre>
     RED - VCC, 5V
     YELLOW - GPIO19; PWN enabled pins (BCM: GPIO12, GPIO13, GPIO18, GPIO19) if available.
     BROWN - GND
-```
+</pre>
 
 4. **HC-SR04 Ultrasonic sensor pins:**
-```text
+<pre>
     VCC - 5V
     GND - GND
     TRIG - GPIO16
@@ -143,31 +143,31 @@ HW-504 Joystick
     Instead of connecting GND and VCC individually to ultrasonic
     and servo, a single GND/VCC is connected to breadboard
     and from there distributed to ultrasonic and servo motor. 
-```
+</pre>
 
 5. **HW-504 2-Axis joystick:**
-```text
+<pre>
     GND - GND
     5V+ - 5V
     VRx - A0 (only analog pin)
     VRy - A1 (only analog pin)
     SW - digital pin 8
-```
+</pre>
 
 6. **RGB LED:**
-```text
+<pre>
    Long leg to 3.3V
    1st leg to digital pin 7 (RED)
    3rs leg leave it alone; not used
    4th lef to digital pin 6 (BLUE)
-```
+</pre>
 
 </details>   
 
 ## Sequential Order of locally running the program
 
 As of now only **3 folders/files are of importance**:
-```
+<pre>
 iot-autocar/
 │
 ├── arduino/
@@ -178,7 +178,7 @@ iot-autocar/
 │
 └── computer/
     └── computer-bridge.py                           # STEP 3: run on computer/PC
-```
+</pre>
 
 #### The order of running these files:
 
