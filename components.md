@@ -84,7 +84,7 @@ HW-504 Joystick
 ![hw-504-joystick-rgb-led-circuit-diagram](./diagrams/circuit-diagrams/(_main_)hw-504-joystick-rgb-led-circuit-diagram.png)
 
 
-(_OPTIONAL_) In order to see how those components are assembled and connected individually check out [diagrams/circuit-diagrams/](./diagrams/circuit-diagrams/). For checking the code of individual componets, go to [components-testing/individual-parts-testing](./components-testing/individual-parts-testing)
+*(_OPTIONALLY_) Check out how those components are assembled and connected individually, visit [diagrams/circuit-diagrams/](./diagrams/circuit-diagrams/). For checking the code of individual componets, go to [components-testing/individual-parts-testing](./components-testing/individual-parts-testing)*
 
 
 ## Sequential Order of locally running the program
