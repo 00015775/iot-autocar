@@ -84,6 +84,9 @@ HW-504 Joystick
 ![hw-504-joystick-rgb-led-circuit-diagram](./diagrams/circuit-diagrams/(_main_)hw-504-joystick-rgb-led-circuit-diagram.png)
 
 
+(_OPTIONAL_) In order to see how those components are assembled and connected individually check out [diagrams/circuit-diagrams/](./diagrams/circuit-diagrams/). For checking the code of individual componets, go to [components-testing/individual-parts-testing](./components-testing/individual-parts-testing)
+
+
 ## Sequential Order of locally running the program
 
 As of now only **3 folders/files are of importance**:
@@ -100,7 +103,7 @@ iot-autocar/
     └── computer-bridge.py                           # STEP 3: run on computer/PC
 ```
 
-#### The order of running these files (_Specify the file path, if it different for you_):
+#### The order of running these files:
 
 1. Upload `hw-504-joystick-send-values.ino` to Arduino
 2. Followingly, run `pi-receiver-mode-switcher.py` from your RPi: 
