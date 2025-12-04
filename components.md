@@ -182,10 +182,14 @@ iot-autocar/
 
 #### The order of running these files:
 
-1. Upload `hw-504-joystick-send-values.ino` to Arduino
+1. Upload `hw-504-joystick-send-values.ino` to Arduino.
 2. Followingly, run `pi-receiver-mode-switcher.py` from your RPi: 
-    * ```python ./raspberry-pi/pi-receiver-mode-switcher.py```
+```shell
+python ./raspberry-pi/pi-receiver-mode-switcher.py
+```
 3. Only after than, run `computer-bridge.py` on your computer: 
-    * ```python ./computer/computer-bridge.py```
+```shell
+python ./computer/computer-bridge.py
+```
 
 
