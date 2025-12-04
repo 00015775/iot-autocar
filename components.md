@@ -91,7 +91,9 @@ HW-504 Joystick
     <strong>To see where each wire and pin connects, click here:</strong>
 </summary>
 
-- **L298N and DC hobby motor wires and pins:**
+### Components were connected in the order provided below.
+
+1. **L298N and DC hobby motor wires and pins:**
 ```text
     Red wires - IN1, IN3
     Black wires - IN2, IN4
@@ -108,7 +110,7 @@ HW-504 Joystick
     Connect RPi GND to L298N GND powered from battery
 ```
 
-- **IR sensor pins:**
+2. **IR sensor pins:**
 ```text
     GND - GND
     VCC - 5V
@@ -120,7 +122,7 @@ HW-504 Joystick
  distribute from there to IR sensors which are also connected to breadboard
 ```
 
-- **Servo SG09 motor:**
+3. **Servo SG09 motor:**
 ```text
     RED - VCC, 5V
     YELLOW - GPIO19; 
@@ -128,7 +130,7 @@ HW-504 Joystick
     BROWN - GND
 ```
 
-- **HC-SR04 Ultrasonic sensor pins:**
+4. **HC-SR04 Ultrasonic sensor pins:**
 ```text
     VCC - 5V
     GND - GND
@@ -144,7 +146,7 @@ HW-504 Joystick
     and from there distributed to ultrasonic and servo motor. 
 ```
 
-- **HW-504 2-Axis joystick:**
+5. **HW-504 2-Axis joystick:**
 ```text
     GND - GND
     5V+ - 5V
@@ -153,7 +155,7 @@ HW-504 Joystick
     SW - digital pin 8
 ```
 
-- **RGB LED:**
+6. **RGB LED:**
 ```text
    Long leg to 3.3V
    1st leg to digital pin 7 (RED)
