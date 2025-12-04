@@ -117,9 +117,9 @@ HW-504 Joystick
     OUT(right)=GPIO17, 
     OUT(left)=GPIO27
 
- Instead of connecting GND, VCC to each of IR sensors individually, 
- connect only a single GND, VCC from RPi to breadboard then 
- distribute from there to IR sensors which are also connected to breadboard
+    Instead of connecting GND, VCC to each of IR sensors individually, 
+    connect only a single GND, VCC from RPi to breadboard then 
+    distribute from there to IR sensors which are also connected to breadboard
 ```
 
 3. **Servo SG09 motor:**
