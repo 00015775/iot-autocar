@@ -74,6 +74,16 @@ HW-504 Joystick
 
 ---
 
+## Circuit Diagram
+
+### Car chassis
+![iot-autocar-full-circuit-diagram](./diagrams/circuit-diagrams/(_main_)iot-autocar-full-circuit-diagram.png)
+
+
+### Remote joystick
+![hw-504-joystick-rgb-led-circuit-diagram](./diagrams/circuit-diagrams/(_main_)hw-504-joystick-rgb-led-circuit-diagram.png)
+
+
 ## Sequential Order of locally running the program
 
 As of now only **3 folders/files are of importance**:
@@ -90,13 +100,14 @@ iot-autocar/
     └── computer-bridge.py                           # STEP 3: run on computer/PC
 ```
 
-#### The order of running these files:
+#### The order of running these files (_Specify the file path, if it different for you_):
+
 1. Upload `hw-504-joystick-send-values.ino` to Arduino
 2. Followingly, run `pi-receiver-mode-switcher.py` from your RPi: 
-    * `python ./raspberry-pi/pi-receiver-mode-switcher.py` or 
-    * `python3 ./raspberry-pi/pi-receiver-mode-switcher.py`
+    * ```python ./raspberry-pi/pi-receiver-mode-switcher.py``` or 
+    * ```python3 ./raspberry-pi/pi-receiver-mode-switcher.py```
 3. Only after than, run `computer-bridge.py` on your computer: 
-    * `python ./computer/computer-bridge.py` or 
-    * `python3 ./computer/computer-bridge.py`
+    * ```python ./computer/computer-bridge.py``` or 
+    * ```python3 ./computer/computer-bridge.py```
 
 
