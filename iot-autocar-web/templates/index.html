@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Control Dashboard</title>
+    
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    
+    <!-- Chart.js for Data Visualization -->
+    <!-- Reference: https://www.chartjs.org/docs/latest/ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+        
+        /* Mode Switcher */
+        .mode-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .mode-btn.active {
+            background: #4CAF50;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(76,175,80,0.4);
+        }
+        
+        .mode-btn:not(.active) {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        /* Sensor Status */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .sensor-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .sensor-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .ir-indicator {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 10px;
+        }
+        
+        .ir-clear {
+            background: #4CAF50;
+            box-shadow: 0 0 20px #4CAF50;
+        }
+        
+        .ir-blocked {
+            background: #f44336;
+            box-shadow: 0 0 20px #f44336;
+        }
+        
+        /* Control Buttons */
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .control-btn {
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+            background: rgba(255,255,255,0.4);
+        }
+        
+        .control-btn.stop {
+            background: #f44336;
+            grid-column: 2;
+        }
+        
+        /* Sliders */
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+        }
+        
+        .slider-value {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            background: rgba(76,175,80,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Joystick Visualizer */
+        .joystick-display {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .joystick-dot {
+            width: 30px;
+            height: 30px;
+            background: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.1s;
+            box-shadow: 0 0 15px #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Robot Control Dashboard</h1>
+        
+        <!-- Mode Switcher -->
+        <div class="card">
+            <h2>Control Mode</h2>
+            <div class="mode-switcher">
+                <button class="mode-btn active" id="manualBtn" onclick="setMode('manual')">
+                    Manual Control
+                </button>
+                <button class="mode-btn" id="autonomousBtn" onclick="setMode('autonomous')">
+                    Autonomous Mode
+                </button>
+            </div>
+            <div id="statusMsg" class="status-message">Manual mode active</div>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Sensor Monitoring -->
+            <div class="card">
+                <h2>📡 Sensor Status</h2>
+                <div class="sensor-grid">
+                    <div class="sensor-item">
+                        <div>Ultrasonic Distance</div>
+                        <div class="sensor-value" id="distance">-- cm</div>
+                    </div>
+                    <div class="sensor-item">
+                        <div>Servo Angle</div>
+                        <div class="sensor-value" id="servoAngle">90°</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <div>IR Sensors</div>
+                    <div>
+                        <span class="ir-indicator" id="irLeft"></span>
+                        <span>Left</span>
+                        <span class="ir-indicator" id="irRight"></span>
+                        <span>Right</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Manual Controls -->
+            <div class="card" id="manualControls">
+                <h2>🎮 Manual Control</h2>
+                
+                <div class="control-grid">
+                    <div></div>
+                    <button class="control-btn" onmousedown="move('forward')" onmouseup="move('stop')" ontouchstart="move('forward')" ontouchend="move('stop')">
+                        ⬆️ Forward
+                    </button>
+                    <div></div>
+                    
+                    <button class="control-btn" onmousedown="move('left')" onmouseup="move('stop')" ontouchstart="move('left')" ontouchend="move('stop')">
+                        ⬅️ Left
+                    </button>
+                    <button class="control-btn stop" onclick="move('stop')">
+                        ⏹️ STOP
+                    </button>
+                    <button class="control-btn" onmousedown="move('right')" onmouseup="move('stop')" ontouchstart="move('right')" ontouchend="move('stop')">
+                        ➡️ Right
+                    </button>
+                    
+                    <div></div>
+                    <button class="control-btn" onmousedown="move('backward')" onmouseup="move('stop')" ontouchstart="move('backward')" ontouchend="move('stop')">
+                        ⬇️ Backward
+                    </button>
+                    <div></div>
+                </div>
+                
+                <!-- Speed Control -->
+                <div class="slider-container">
+                    <label>Motor Speed</label>
+                    <input type="range" id="speedSlider" min="0" max="100" value="50" oninput="setSpeed(this.value)">
+                    <div class="slider-value" id="speedValue">50%</div>
+                </div>
+            </div>
+            
+            <!-- Servo Control -->
+            <div class="card">
+                <h2>🔄 Servo Control</h2>
+                
+                <div class="slider-container">
+                    <label>Servo Angle</label>
+                    <input type="range" id="servoSlider" min="0" max="180" value="90" oninput="setServoAngle(this.value)">
+                    <div class="slider-value" id="servoValue">90°</div>
+                </div>
+                
+                <button class="control-btn" style="width: 100%; margin-top: 20px;" onclick="servoSweep()">
+                    🔍 Perform Sweep (0-180°)
+                </button>
+            </div>
+            
+            <!-- Distance Statistics -->
+            <div class="card">
+                <h2>📊 Path Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Mean Distance</div>
+                        <div class="stat-value" id="statMean">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Median</div>
+                        <div class="stat-value" id="statMedian">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Min / Max</div>
+                        <div class="stat-value" id="statRange">-- / --</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Std. Dev.</div>
+                        <div class="stat-value" id="statStdev">--</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Servo Sweep Visualization -->
+            <div class="card" style="grid-column: span 2;">
+                <h2>📈 Servo Sweep Visualization</h2>
+                <div class="chart-container">
+                    <canvas id="sweepChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Distance Over Time -->
+            <div class="card" style="grid-column: span 2;">
+                <h2>📉 Distance Monitoring (Real-time)</h2>
+                <div class="chart-container">
+                    <canvas id="distanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Socket.IO connection
+        // Reference: https://socket.io/docs/v4/client-api/
+        const socket = io();
+        
+        let currentMode = 'manual';
+        
+        // Chart.js setup
+        // Reference: https://www.chartjs.org/docs/latest/getting-started/
+        
+        // Servo Sweep Chart (Polar)
+        const sweepCtx = document.getElementById('sweepChart').getContext('2d');
+        const sweepChart = new Chart(sweepCtx, {
+            type: 'polarArea',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Distance (cm)',
+                    data: [],
+                    backgroundColor: 'rgba(76, 175, 80, 0.5)',
+                    borderColor: 'rgba(76, 175, 80, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.2)' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+        
+        // Distance Over Time Chart
+        const distCtx = document.getElementById('distanceChart').getContext('2d');
+        const distanceChart = new Chart(distCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Distance (cm)',
+                    data: [],
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.2)' }
+                    },
+                    x: {
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255,255,255,0.2)' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+        
+        // Socket.IO Event Handlers
+        
+        socket.on('connect', function() {
+            console.log('Connected to robot');
+        });
+        
+        socket.on('sensor_update', function(data) {
+            // Update sensor displays
+            document.getElementById('distance').textContent = data.distance + ' cm';
+            document.getElementById('servoAngle').textContent = data.servo_angle + '°';
+            
+            // Update IR indicators
+            const irLeft = document.getElementById('irLeft');
+            const irRight = document.getElementById('irRight');
+            
+            irLeft.className = 'ir-indicator ' + (data.ir_left === 1 ? 'ir-clear' : 'ir-blocked');
+            irRight.className = 'ir-indicator ' + (data.ir_right === 1 ? 'ir-clear' : 'ir-blocked');
+            
+            // Update distance chart (keep last 50 points)
+            const now = new Date().toLocaleTimeString();
+            distanceChart.data.labels.push(now);
+            distanceChart.data.datasets[0].data.push(data.distance);
+            
+            if (distanceChart.data.labels.length > 50) {
+                distanceChart.data.labels.shift();
+                distanceChart.data.datasets[0].data.shift();
+            }
+            distanceChart.update('none'); // Disable animation for smooth real-time updates
+            
+            // Update statistics
+            if (data.statistics) {
+                document.getElementById('statMean').textContent = data.statistics.mean + ' cm';
+                document.getElementById('statMedian').textContent = data.statistics.median + ' cm';
+                document.getElementById('statRange').textContent = data.statistics.min + ' / ' + data.statistics.max + ' cm';
+                document.getElementById('statStdev').textContent = data.statistics.stdev + ' cm';
+            }
+        });
+        
+        socket.on('sweep_data', function(data) {
+            // Update sweep chart
+            sweepChart.data.labels.push(data.angle + '°');
+            sweepChart.data.datasets[0].data.push(data.distance);
+            sweepChart.update();
+        });
+        
+        socket.on('status', function(data) {
+            document.getElementById('statusMsg').textContent = data.message;
+        });
+        
+        socket.on('robot_state', function(state) {
+            currentMode = state.mode;
+            updateModeUI();
+        });
+        
+        // Control Functions
+        
+        function setMode(mode) {
+            socket.emit('set_mode', { mode: mode });
+            currentMode = mode;
+            updateModeUI();
+        }
+        
+        function updateModeUI() {
+            const manualBtn = document.getElementById('manualBtn');
+            const autonomousBtn = document.getElementById('autonomousBtn');
+            const manualControls = document.getElementById('manualControls');
+            
+            if (currentMode === 'manual') {
+                manualBtn.classList.add('active');
+                autonomousBtn.classList.remove('active');
+                manualControls.style.opacity = '1';
+                document.getElementById('statusMsg').textContent = 'Manual mode active';
+            } else {
+                manualBtn.classList.remove('active');
+                autonomousBtn.classList.add('active');
+                manualControls.style.opacity = '0.5';
+                document.getElementById('statusMsg').textContent = 'Autonomous mode active';
+            }
+        }
+        
+        function move(direction) {
+            if (currentMode === 'manual') {
+                socket.emit('move', { direction: direction });
+            }
+        }
+        
+        function setSpeed(value) {
+            document.getElementById('speedValue').textContent = value + '%';
+            socket.emit('set_speed', { speed: parseInt(value) });
+        }
+        
+        function setServoAngle(value) {
+            document.getElementById('servoValue').textContent = value + '°';
+            socket.emit('set_servo', { angle: parseInt(value) });
+        }
+        
+        function servoSweep() {
+            // Clear previous sweep data
+            sweepChart.data.labels = [];
+            sweepChart.data.datasets[0].data = [];
+            sweepChart.update();
+            
+            socket.emit('servo_sweep');
+        }
+        
+        // Keyboard controls for manual mode
+        document.addEventListener('keydown', function(e) {
+            if (currentMode !== 'manual') return;
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                case 'w':
+                    move('forward');
+                    break;
+                case 'ArrowDown':
+                case 's':
+                    move('backward');
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                    move('left');
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                    move('right');
+                    break;
+                case ' ':
+                    move('stop');
+                    break;
+            }
+        });
+        
+        document.addEventListener('keyup', function(e) {
+            if (currentMode !== 'manual') return;
+            
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(e.key)) {
+                move('stop');
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!--
+References:
+- Socket.IO Client: https://socket.io/docs/v4/client-api/
+- Chart.js Documentation: https://www.chartjs.org/docs/latest/
+- HTML5 Canvas: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
+- CSS Grid Layout: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout
+- Keyboard Events: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+-->
+
