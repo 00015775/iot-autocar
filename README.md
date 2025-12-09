@@ -1,5 +1,9 @@
-# Components Logic
+# Autonomous Obstacle-Avoiding Car with Remote Joystick Control
+
+This project implements Raspberry Pi-based robot car that autonomously navigates using IR ground sensors, a HC-SR04 ultrasonic sensor mounted on a SG90 servo, and a L298N motor driver. The car continuously monitors obstacles and scans its surroundings with a servo sweep to determine the clearest direction before moving. A HW-504 joystick connected through a USB-PC-to-network bridge enables manual remote control, allowing users to switch between autonomous and manual driving with a double press. The system cleanly separates responsibilities: Arduino reads inputs, a computer forwards them over the network, and the Raspberry Pi executes real-time driving logic.
+
 ---
+# Components Logic
 ## Combining L298N+DC motors, 2xIR sensors, Ultrasonic(HC-SR04) sensor+Servo(SG90) motor code so the system works as a single program
 
 1. **IR sensors** (_mounted near the ground_) continuously check for obstacles at ground level.
